@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class BankService {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        List<String> accountList = new ArrayList<>();
+        List<BankAccount> accountList = new ArrayList<>();
         while(true){
             System.out.println("이용하실 서비스를 선택해주세요.");
             System.out.println("1. 계좌 개설 2. 입금 3. 출금 4. 계좌 송금");
@@ -24,58 +24,77 @@ public class BankService {
             if(choice == 1){
                 System.out.println("계좌 개설을 선택하셨습니다.");
                 System.out.println("계좌 번호를 입력하세요.");
-                String newAccount = sc.nextLine();
+                String newAccountNumber = sc.nextLine();
+                BankAccount newAccount = new BankAccount(newAccountNumber);
                 accountList.add(newAccount);
-                System.out.println("계좌 개설이 완료되었습니다. 신규 계좌번호 : "+ newAccount);
+                System.out.println("계좌 개설이 완료되었습니다. 신규 계좌번호 : " + newAccount.accountNumber);
                 System.out.println("===================================");
             }
             else if(choice == 2){
                 System.out.println("입금을 선택하셨습니다.");
                 System.out.println("입금하실 계좌번호를 입력하세요.");
                 String myAccount = sc.nextLine();
-                for (String s : accountList) {
-                    if(s.equals(myAccount)){
-                        BankAccount bankAccount = new BankAccount(myAccount);
-                        System.out.println(myAccount + "로 입금하실 금액을 입력하세요.");
-                        int money = sc.nextInt();
-                        bankAccount.deposit(money);
-                        System.out.println("===================================");
-                    }
-                    else{
-                        System.out.println("존재하지 않는 계좌번호입니다.");
-                    }
+                BankAccount bankAccount = findAccount(accountList, myAccount);
+                if (bankAccount != null) {
+                    System.out.println(myAccount + " 로 입금하실 금액을 입력하세요.");
+                    int money = sc.nextInt();
+                    bankAccount.deposit(money);
+                    System.out.println("===================================");
+                } else {
+                    System.out.println("존재하지 않는 계좌번호입니다.");
                 }
-
             }
             else if(choice == 3){
                 System.out.println("출금을 선택하셨습니다.");
                 System.out.println("출금하실 계좌번호를 입력하세요.");
                 String myAccount = sc.nextLine();
-                for (String s : accountList) {
-                    if(s.equals(myAccount)){
-                        BankAccount bankAccount = new BankAccount(myAccount);
-                        System.out.println(myAccount + "로 입금하실 금액을 입력하세요.");
-                        int money = sc.nextInt();
-                        if(bankAccount.balance >= money){
-                            bankAccount.withdraw(money);
-                            System.out.println("===================================");
-                        }
-                        else{
-                            System.out.println("잔액이 부족합니다.");
-                            System.out.println("===================================");
-                        }
-
-                    }
-                    else{
-                        System.out.println("존재하지 않는 계좌번호입니다.");
-                    }
+                BankAccount bankAccount = findAccount(accountList, myAccount);
+                if (bankAccount != null) {
+                    System.out.println(myAccount + " 로 출금하실 금액을 입력하세요.");
+                    int money = sc.nextInt();
+                    bankAccount.withdraw(money);
+                    System.out.println("===================================");
+                } else {
+                    System.out.println("존재하지 않는 계좌번호입니다.");
                 }
             }
             else if(choice == 4){
+                System.out.println("계좌 송금을 선택하셨습니다.");
+                System.out.println("출금하실 계좌를 입력해주세요.");
+                String myAccount = sc.nextLine();
+                BankAccount bankAccount = findAccount(accountList, myAccount);
 
+                if (bankAccount != null) {
+                    System.out.println("송금하실 금액을 입력해주세요.");
+                    int money = sc.nextInt();
+                    sc.nextLine();
+                    System.out.println("상대방 계좌를 입력해주세요.");
+                    String opponentAccount = sc.nextLine();
+                    BankAccount opponentBankAccount = findAccount(accountList, opponentAccount);
+                    if (opponentBankAccount != null) {
+                        System.out.println(myAccount + " 에서 " + opponentAccount + " 로 " + money + " 원 송금이 진행됩니다.");
+                        System.out.println("===================================");
+                        bankAccount.transfer(opponentBankAccount, money);
+                        System.out.println("===================================");
+                    } else {
+                        System.out.println("존재하지 않는 상대방 계좌번호입니다.");
+                    }
+                } else {
+                    System.out.println("존재하지 않는 계좌번호입니다.");
+                }
             }
         }
     }
+
+    public static BankAccount findAccount(List<BankAccount> accountList, String accountNumber) {
+        for (BankAccount account : accountList) {
+            if (account.accountNumber.equals(accountNumber)) {
+                return account;
+            }
+        }
+        return null;
+    }
 }
+
 
 

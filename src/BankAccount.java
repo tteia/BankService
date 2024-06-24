@@ -11,10 +11,7 @@ public class BankAccount {
 
     public BankAccount(String accountNumber){
         this.accountNumber = accountNumber;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
+        this.balance = 0;
     }
 
     public int getBalance() {
@@ -22,16 +19,32 @@ public class BankAccount {
     }
 
     public void deposit(int money){
-        System.out.println("입금이 진행됩니다.");
+        System.out.println("입금을 선택하셨습니다.");
         balance += money;
-        System.out.println(money + "원 입금 되었습니다.");
+        System.out.println(money + " 원 입금 되었습니다.");
+        System.out.println("현재 잔액 " + balance + " 원 입니다.");
     }
 
     public void withdraw(int money){
-        System.out.println("출금이 진행됩니다.");
-        balance -= money;
-        System.out.println(money + "원 출금 되었습니다.");
+        if (balance >= money) {
+            System.out.println("출금을 선택하셨습니다.");
+            balance -= money;
+            System.out.println(money + "원 출금 되었습니다.");
+            System.out.println("현재 잔액 " + balance + " 원 입니다.");
+        } else {
+            System.out.println("잔액이 부족합니다.");
+        }
     }
 
-
+    public void transfer(BankAccount opponentAccount, int money){
+        if (balance >= money) {
+            this.balance -= money;
+            opponentAccount.balance += money;
+            System.out.println("송금이 완료되었습니다.");
+            System.out.println("현재 잔액 " + this.balance + " 원 입니다.");
+        } else {
+            System.out.println("잔액이 부족합니다.");
+        }
+    }
 }
+
